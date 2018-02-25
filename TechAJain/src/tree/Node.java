@@ -1,9 +1,9 @@
 package tree;
 
 public class Node {
-	private Object data;
-	private Node left;
-	private Node right;
+	public Object data;
+	public Node left;
+	public Node right;
 	
 	public Node(Object data) {
 		this.data = data;
