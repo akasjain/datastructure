@@ -18,11 +18,11 @@ public class PathRootToLeaf {
 		
 		PathRootToLeaf path = new PathRootToLeaf();
 		path.stack.push((int)root.data);
-		path.printPath(root);
+		path.printPathMethod1(root);
 		
 	}
 
-	private void printPath(Node root) {
+	private void printPathMethod1(Node root) {
 		Node node = root;
 		if(root == null)
 			return;
@@ -33,13 +33,13 @@ public class PathRootToLeaf {
 		
 		if(node.left != null) {
 			stack.push((int)node.left.data);
-			printPath(node.left);
+			printPathMethod1(node.left);
 			stack.pop();
 		} 
 		
 		if(node.right != null) {
 			stack.push((int)node.right.data);
-			printPath(node.right);
+			printPathMethod1(node.right);
 			stack.pop();
 		}
 	}
