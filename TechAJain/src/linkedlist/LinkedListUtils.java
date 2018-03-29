@@ -71,16 +71,16 @@ public class LinkedListUtils {
 	}
 	
 	public static void printLinkedList(LinkedListNode head) {
-		if(head.getNext() == null) {
-			return;
-		}
-		LinkedListNode temp = head;
-		while(temp.getNext() != null) {
-			temp = temp.getNext();
-			System.out.print(temp.getData() + " -> ");
-			
-		}
-	}
+        if(head.getNext() == null) {
+                return;
+        }
+        LinkedListNode temp = head;
+        while(temp != null) {
+                System.out.print(temp.getData() + " -> ");
+                temp = temp.getNext();
+
+        }
+}
 	
 	public static LinkedListNode deleteFirstNode(LinkedListNode head) {
 		

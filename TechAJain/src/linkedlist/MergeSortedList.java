@@ -63,5 +63,29 @@ public class MergeSortedList {
 		
 		return head.next;
 	}
+	
+	public MultiLinkNode mergeSortedList(MultiLinkNode head1, MultiLinkNode head2) {
+        MultiLinkNode head = new MultiLinkNode(-1);
+        MultiLinkNode temp = head;
+
+        while(head1 != null && head2 != null) {
+                if((int)head1.data <= (int)head2.data) {
+                        temp.down = head1;
+                        head1 = head1.down;
+                } else {
+                        temp.down = head2;
+                        head2 = head2.down;
+                }
+                temp = temp.down;
+        }
+
+        if(head1 == null) {
+                temp.down = head2;
+        } else {
+                temp.down = head1;
+        }
+
+        return head.down;
+}
 
 }
