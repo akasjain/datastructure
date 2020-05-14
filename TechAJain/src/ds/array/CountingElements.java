@@ -2,6 +2,9 @@ package ds.array;
 
 import java.util.*;
 
+/**
+ * https://github.com/akasjain/datastructure/blob/master/TechAJain/src/leetcode/challenge/april/C07_CountingElements.java
+ */
 public class CountingElements {
     public int countElements(int[] arr) {
         Set<Integer> nums = new HashSet<>();
@@ -18,10 +21,11 @@ public class CountingElements {
     }
 
     public static void main(String[] args) {
-        int[] arr = new int[]{1,3,2,3,5,0, 2};
         CountingElements ce = new CountingElements();
+
+        int[] arr = new int[]{1,3,2,3,5,0,2};
         System.out.println(ce.countElements(arr));
+
+
     }
 }
-
-//[1,3,2,3,5,0]
