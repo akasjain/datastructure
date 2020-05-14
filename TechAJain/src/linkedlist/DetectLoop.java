@@ -12,7 +12,7 @@ public class DetectLoop {
 		node.next.next.next.next = new LinkedListNode(9);
 		node.next.next.next.next.next = new LinkedListNode(11);
 		node.next.next.next.next.next.next = new LinkedListNode(13);
-		node.next.next.next.next.next.next.next = null;
+		node.next.next.next.next.next.next.next = node.next.next;
 		
 		DetectLoop d = new DetectLoop();
 		System.out.println(d.detectLoop(node));

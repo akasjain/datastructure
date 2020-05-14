@@ -1,0 +1,127 @@
+- Did you ever have conflicts with manager/supervisor?
+	Once there was dependency on other team. We thought they would complete on time. Due to miscommunication, it was miscommunicated.
+
+- The most challenging work that you've done:
+	Batch operations
+	Improving the performance on Bullseye component searching - improving the search query
+		- Improving mongodb search query
+		- Replacing sync with async calls
+		- Replacing some of calls with eager loading to have data on demand
+		- Catalog search - Replacing MongoDB search with Solr Search
+		- Creating indexes on attributes
+
+- The disagreement happened where you're wrong
+	- Design wise improving the code
+	- I created one API, which was GET, but when traffic increased, it got failed & we switched to POST.
+	- In our solr, initially we had some client, but as client increased, it was taking time; in some cases even hours.
+	    Customer complained for long time taken in indexing.
+		i was in opinion that you don't either time or increse the infra. So in elastic search data ingestion time is less.
+
+- The disagreement happened where you're right
+	- Improving the search - Page was taking time, so i emphasized on user experience rather than showing actual count.
+
+- The last time you stretched a lot for customer:
+	- Created running activity on our page
+	- We release a feature which was working for 90% of customer, but some of the customer who have User Permission enabled on their account got stuck & they raised blocker.
+		Issue was that we're sending the default group & it should be specific one.
+
+- Any conflict with a guy & how you resolved it:
+	- We've separate UX team, which design all UI mocks. So there was one feature, which was tight & crucial. We're active but UX guy was slow. So we got delayed by him. We're little bt furious then we got to know to he's also working on some other features as well, but didn't communicated well earlier. Then we understood & discussed with his manager.
+
+- How would you work with a psychopath in team:
+	- Understand their behaviour at first why their doing this. i.e when i joined Adobe, there was a guy in team, who was not that famous. he used to take lot of time in review & multiple iteration. People used to avoid that. But if you see it's good for your learning as well for the project.
+
+	- Help then succeed (help them in achieving their goal) & they'll start liking you. Even with your manager, give your 100% & he'll start liking you.
+
+	- If necessary, talk to mutual manager about the issue, i.e if you both are lead & fighting for resources, you both should go to manager & explain the things. After analysis, he'll allocate resources effectively.
+
+- Did you ever have to deliver on a tight deadline and how did you stick to it.
+	- We're doing a feature (Multimetric) & before 3 days of release, we found issue that it's not working well. So we worked aggresively to finish it before time.
+	- A customer issue occurred in mid-night & we worked for it complete night.
+
+- How you take decision of release in case of any issues
+	- If it's impacting existing functionality then better to postpone, but if it's new & if you can finish with confidence, release it.
+
+- What is the toughest project (technically) you have worked, how much did you contribute to it and given a chance to rewrite it what all would you change
+	- Doing Batch operation for all bullsye component. Completely handled by me. For now, we're not getting any issue, so i guess it's that perfect.
+	- User Permisioning
+	- Improving the Performance of searching in components.
+
+- how did you train/groom the juniors in the team
+	- Start with introduction of product, them explain the basic workflow, then start with bug, Improvement & feature
+
+- how do you do a code review
+	- Code duplicacy
+	- Basic Design things
+	- If logic can be improved
+	- Style check
+	- Conventions are correct
+	- No regression through code which impact existing functionality
+	- If can be written better, i.e. return x.contains(y) rather than if else
+	- No comment
+	- Use Shy code - write with smallest scope & only increase scope if you need to
+	- No Hard-Coded values
+	- Language Coding Conventions
+	- Architecture/ Design - reusable, mvc, clean code, follow SOLID principal
+		- S (Single Responsibility Principle): Do not place more than one responsibility into a single class or function.
+		- O (Open closed Priciple): While adding new functionality, existing code should not be modified.
+		- L (Liskov substitute Principle): The child class should not change the behaviour of parent class
+		- I (Interface segregation): Do not create lengthy interfaces, instead split them into smaller interfaces based on functinality
+		- D (Dependancy Inversion principle): High level modules should not depend on low level modules
+	- Check if unit tests haven been written. Do they cover failure conditions
+	- If possible, make it generic
+	- Code Documentation
+
+- how else did you contribute to the team other than the regular feature implementation
+	- Environment related issues check.
+	- Taking sessions for new entrants
+	- Customer issues
+	- Extending help to other teams
+
+- quick intro and reasoning for all the job switches
+	- Sopra to Samsung: At Sopra, my role was not that much, i was doing the basic work of comparing files & modify as per client. At that time, i had very much interest in Learning new tech like Android & Samsung was leader in Mobiles during that time so i switched & i think was very good decision. There i went to Korea on onsite as well. I learnt a lot in Samsung.
+
+	- Samsung to Adobe: Moving forward in life
+	- Adobe to Amazon: Jeff Bezos'Amazon is most innovative company. i.e. Alexa launched & i was reading a artical where now Alexa is being integrated in Ford cars. Amazon Prime is another example. Amazon Pantry, Amazon inhouse products, Kndle, Echo, Fire Tablets
+		- Amazon Fresh - Where anyone can order online & he can pick from designated area in 2 hour.
+		- I was reading a article about Amazon that how they are now embedding AI & Machine learning into their products.
+		- Amazon One - 40 Cargo fleets
+
+
+
+
+
+- Leadership principals:
+	- Customer Obsession
+	- Frugality
+	- Invent & Simplify
+	- Bias in action
+	- Develop the "Best"
+	- Ownership
+	- Vocally Self Critical
+	- Think Big
+	- Dive Deep
+	- Right A Lot
+	- Learn & Be Curious
+	-
+
+check more questions: https://www.youtube.com/watch?v=e1Y6SI9WymY
+
+- What most innovative work you have so far:
+ - Recs as AB offer: Earlier we could tests only static offer, but we implemented Recs as offer & it was game changer for us
+
+
+
+ conflict - dependency on other team for new feature -> they didn;t complete as committed
+ disagreement - design
+
+ Tell me about a time when you have multiple blockers?
+
+ Tell me about a time when you got a toughest feedback?
+
+ What are your goals of reaching the next level?
+
+
+
+
+ Hand sanitizer restriction... user category...

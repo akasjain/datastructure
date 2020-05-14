@@ -44,21 +44,8 @@ public class MergeSortedList {
 		
 		if(head1 == null) {
 			temp.next = head2;
-			
-			
-/*			while(head2 != null) {
-				temp.next = head2;
-				head2 = head2.next;
-				temp = temp.next;
-			}*/
 		} else {
 			temp.next = head1;
-
-			/*while(head1 != null) {
-				temp.next = head1;
-				head1 = head1.next;
-				temp = temp.next;
-			}*/
 		}
 		
 		return head.next;

@@ -1,0 +1,95 @@
+-Tell me about a situation where you have missed a deadline
+-Follow-ups: Did you learn anything from it, how did your manager reacted.
+I was tasked to do Target-Analytics Integration. I was sending server side events of the customer interaction with Target to Analytics. Analytics already has APIs to
+consume any data which comes in CSV format. However, when Target side of work was completed and integration was tested I found out that there is a need of handshaking b/w
+Analytics and Target so that I know that CSV is uploaded. It turned out that Analytics has to create a bucket where they receive all similar requests. That bucket creation
+on all environment was not in the plan, not anticipated. During POC I tried with the default bucket and thought it to be workable.
+Bucket creation involves creating a database where those events are stored. For this, Analytics team had to take CMR but they were not able to align  it with one of their
+release. As a result, this feature has to be placed behind feature toggle. And was turned off for that release.
+Manager reaction was not quite happy with the sequence of things. He expected that this requirement should have come early.
+
+-Tell me about a situation where you had a disagreement.
+Target involves image upload for use my marketers in their A/B test at some later point. We wanted to improve that flow so that it doesn't take resources with real-time
+requirements. Two solutions to this problem were proposed - One is async by me and other was ThreadPool. I had strongly disagreed to THreadPool approach because it will
+tend to share resources with other tasks, when the need was to decouple it with. It was a solution for a short term and my reasoning took the team into confidence that
+it will not work when we have large image requests, especially during shopping season.
+
+-Tell me about a situation where you did something extra for your product, which was not part of your daily tasks.
+-Follow-ups: Explain the impact in terms of numbers, why was the task was not in sprint task
+I went into customer advocacy calls with product manager.
+Objective - Early adoption of feature that I and team developed. New features are not adopted early because anything that happens in AB test has potential to
+impact the revenue. So marketers are being cautious.
+
+-Explain your current role and the product you are working and some cross questions
+
+-Tell me about a situation where you learned something very new and aced it.
+Until that time we were doing mostly synchronous processing and only using the constructs - Job Queue, Distributed Queue provided by the underlying infra server i.e. AEM.
+To suit the product requirements, I learned and proposed seperating async operations from the Job Queue. That workflow was developed and it turned out to be success.
+Both in terms of performance improvement which lead to greater customer experiences and reduction in production issues arising out of load at peak times.
+
+-Tell me about a situation where you did something innovative.
+Batch API
+
+-Tell me about a situation each team mates proposed a different solution for same problem and you had to accept their approach.
+Multi Metric GET and POST API
+
+
+
+What is your day to day work?
+technical problem, code
+My day to day is generally driven by the tasks decided in fortnightly sprint planning. The breadth of work that I do is
+REST API endpoints involving business logic that may require new DB tables, migration of existing ones. Unit Tests, presenting POCs
+Includes Code Reviews, Unit Tests, Integration Tests.
+Moreover, I am an active member of design decisions made in the team, feasibility study and POC evaluation.
+Creating new services to an existing component or designing new microservice is the scope of my work.
+
+Recently created microservice is data ingestion for customer CRM data to build segments for personalization of
+returning visitors, even before. It is like a data pipeline where
+
+Disagreement - Batch sending of data versus single records. Additional feature is each successful / failed entry can be
+monitored. Success rate is higher.
+
+When you went out of the way to accomplish a work?
+
+
+Anything good you have done and happy about?
+1. Problem
+2. Identify the problem
+3. Quantify the problem
+4. SOlution
+5. Impact on the company/product - Choose terms from LP
+
+
+
+
+Answers & tips for the following 28 interview questions:
+Tell me about a situation where you directly impacted customer satisfaction?
+Tell me about a time you had to earn the customer's trust?
+Tell me about a time that you generated change in your organization?
+What has been your greatest accomplishment?
+What is the most difficult situation you have ever faced in your life? How did you handle it?
+Describe a process that you made better using a simple solution?
+Give me an example of when you had to use your negotiating skills?
+What is your take on leadership?
+Describe a time when you hired someone and it didn't turn out as expected and how did you handle it?
+Do you think you'll reach a point where you storm off the floor and never return?
+What type of leader are you? Explain your leadership style. What does it mean to be a great leader?
+Describe a time where you went above and beyond your job description?
+What would you do if somehow you misdirected 10,000 units of something?
+Tell me about a time when you had to think of more than one way to convince a person to agree with an idea?
+If your direct manager was instructing you to do something you disagreed with, how would you handle it?
+How do you motivate people?
+If you were told that you project was cancelled, what would you do?
+If you were given a project with no clear goal or resources, how would you approach it?
+What is the worst mistake you ever made?
+What would you do if you found out that your closest friend at work was stealing?
+What would you do if you saw someone being unsafe at work?
+Tell me about the last time you had to apologize for someone?
+Tell me about a time when you were leading a group, were assigned a goal, and did not reach it?
+Are you willing to work on your feet for ten hours a day, four days a week?
+Tell me about a time when you had a conflict with a person and how you handled it?
+Tell me about a time when you had a group conflict and how did you overcome this conflict?
+How did your actions in a leadership role increase productivity?
+Give an example of a time when you communicated your vision and motivated your employees?
+Overview of a method for answering behavioral interview questions
+The DIGS Method

@@ -1,0 +1,67 @@
+QuadTree
+https://medium.com/@waleoyediran/spatial-indexing-with-quadtrees-b998ae49336
+
+Node QuadTree() {
+    List<Data> data;
+    QuadTree northwest;
+    QuadTree northeast;
+    QuadTree southwest;
+    QuadTree southeast;
+    Range from;
+    Range to;
+}
+
+Inserting data into a quadtree involves recursively determining which of the four children (quadrants) the data-point should occupy,
+until you reach a leaf-node (quadrant). If the elements in the leaf-nodes exceeds a pre-specified bucket size,
+the leaf node is split into four equal quadrants and the points are rearranged into their correct quadrants.
+insertInTree(root, data) {
+
+    if root is not present:
+        createTreeAndInsert(data)
+    else if root.isLeaf() && root.size() < BUCKET_SIZE:
+        root.add(data)
+        return
+    else if root.isLeaf()                 // indicates that leaf node is full with BUCKET_SIZE
+        decomposeLeafAndInsert(root, data)
+
+    else if root.northwest.isValidParent(data)
+        insertInTree(root.northwest, data)
+
+    else if root.northeast.isValidParent(data)
+        insertInTree(root.northeast, data)
+
+    else if root.southwest.isValidParent(data)
+        insertInTree(root.southwest, data)
+
+    else if root.southeast.isValidParent(data)
+        insertInTree(root.southeast, data)
+}
+
+
+
+Range Query : retrieve all points within a spatial range.
+Ex. A ride-sharing service wants to expose an API to provide the cars available within 1km of a user’s location,
+or Facebook’s “nearby friends” feature wants to expose a list of friends in a user’s town.
+
+getPointsInRange(root, range) {
+
+    points = []
+
+    # If there is no intersection of the range with the given root, return
+    if not root.intersect(range):
+        return points
+
+    if root.isLeaf() {
+        points.append(root.getData())
+        return points
+    }
+
+    getPointsInRange(root.northwest, range)
+    getPointsInRange(root.northeast, range)
+    getPointsInRange(root.southwest, range)
+    getPointsInRange(root.southeast, range)
+}
+
+
+
+

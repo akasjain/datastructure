@@ -1,0 +1,42 @@
+HTTP PATCH /users/1
+
+[
+{ “op”: “replace”, “path”: “/email”, “value”: “new.email@example.org” }
+]
+There may be following possible operations are per the HTTP specification.
+
+[
+   {
+      "op":"test",
+      "path":"/a/b/c",
+      "value":"foo"
+   },
+   {
+      "op":"remove",
+      "path":"/a/b/c"
+   },
+   {
+      "op":"add",
+      "path":"/a/b/c",
+      "value":[
+         "foo",
+         "bar"
+      ]
+   },
+   {
+      "op":"replace",
+      "path":"/a/b/c",
+      "value":42
+   },
+   {
+      "op":"move",
+      "from":"/a/b/c",
+      "path":"/a/b/d"
+   },
+   {
+      "op":"copy",
+      "from":"/a/b/d",
+      "path":"/a/b/e"
+   }
+]
+

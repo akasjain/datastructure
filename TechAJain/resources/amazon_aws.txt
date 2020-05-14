@@ -1,0 +1,103 @@
+/**
+You are given a doubly linked list and an array, which has references to the nodes in the doubly linked list
+Return the number of blocks.
+Example -
+  Input 1
+  DLL - {N1<->N2<->N3<->N4}
+  Array - [N3, N1, N4]
+  Output - 2 (N1, N3-N4)
+
+  Input 2
+  DLL - {N1<->N2<->N3<->N4}
+  Array - [N3, N1, N4, N2]
+  Output - 1 (N1-N2-N3-N4)
+
+  Input 1
+  DLL - {N1<->N2<->N3<->N4<->N5}
+  Array - [N2, N1, N4, N5]
+  Output - 2 (N1-N2, N4-N5)
+
+Solve in O(N) time where N is the number of nodes in LL.
+**/
+
+
+class Node {
+    Node left;
+    Node right;
+}
+
+public int getBlocksCount(Node head, Node[] arr) {
+    int count = 0;
+
+    Set<Node> set = new HashMap<>();
+    for(Node node : arr) {
+        set.add(node); //[ RefToN3, RefToN1, RefToNode4, RefNode2]
+    }
+    Node start = head;
+    boolean found = false;
+
+    while(start != null) {
+        if(!set.contains(start)) {
+            count += found ? 1 : 0;
+            found = false;
+        } else {
+            found = true;
+        }
+
+        start = start.right;
+    }
+
+    count += found ? 1 : 0;
+
+    return count;
+}
+
+
+
+C (childCommands(childCOmmands(...)), )
+
+
+class Command {
+    List<Command> childCommands;
+
+    execute();
+
+    rollback();
+
+    void execute() {
+        List<Command> executed;
+        for each child in order
+            executed.add(child);
+            child.execute();
+
+
+    }
+
+}
+
+    pc
+  / | \
+C1 C2 C3
+      / \   \
+     C4  C5  C6   s
+PC (C1() - C2() - C3 (C4, C5))
+
+pc.execute -> C4 -> C5 -> C3 -> C2 -> C1 -> PC
+
+
+C5, C3
+Collection<Command> findCommandsExecutedBefore(Command failedCommand, Command parentCommand) {
+
+    List<Command> executed;
+
+    for(int i = 0; executed.size(); i++) {
+        if(executed.get(i).equals(failedCommand) {
+            break;
+        }
+    }
+
+    List<Command> failedCommands = new ArrayList(Arrays.copy(executed, 0, i);
+
+    return failedCommands;
+
+}

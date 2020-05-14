@@ -25,9 +25,7 @@ public class SumOfNodes {
 		
 		int diffOfNodes = obj.getDifferenceOfNodesAtAlternateLevel(root);
 		System.out.println(diffOfNodes);
-		
 	}
-
 
 	private int getSumOfNodes(Node root) {
 
@@ -38,9 +36,13 @@ public class SumOfNodes {
 		else {
 			return (int)node.data + (int)getSumOfNodes(node.left) + (int)getSumOfNodes(node.right);
 		}
-		
 	}
 	
+	/**
+	 * https://www.geeksforgeeks.org/write-a-c-program-to-calculate-size-of-a-tree/
+	 * @param root
+	 * @return size of tree
+	 */
 	private int getNumOfNodes(Node root) {
 		Node node = root;
 		if(node == null) {
@@ -49,7 +51,6 @@ public class SumOfNodes {
 		else {
 			return (int)1 + (int)getNumOfNodes(node.left) + (int)getNumOfNodes(node.right);
 		}
-		
 	}
 	
 	private int getNumOfLeafNodes(Node root) {
@@ -64,7 +65,6 @@ public class SumOfNodes {
 		else {
 			return (int)getNumOfLeafNodes(node.left) + (int)getNumOfLeafNodes(node.right);
 		}
-		
 	}
 	
 	private int getDifferenceOfNodesAtAlternateLevel(Node root) {
@@ -78,9 +78,5 @@ public class SumOfNodes {
 					- (int)getDifferenceOfNodesAtAlternateLevel(node.left) 
 					- (int)getDifferenceOfNodesAtAlternateLevel(node.right);
 		}
-		
-		
 	}
-	
-
 }

@@ -1,6 +1,6 @@
 package arrays;
 
-import org.junit.Test;
+//import org.junit.Test;
 
 public class Sorting {
 
@@ -161,7 +161,7 @@ public class Sorting {
 		a[index2] = temp;
 	}
 	
-	@Test
+	//@Test
 	public void testSelectionSort() {
 		int a[] = {2,5,1,-7,-3,9,1,-3};
 		Sorting.selectionSort(a);
@@ -171,7 +171,7 @@ public class Sorting {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void testBubbleSort() {
 		int a[] = {2,5,1,-7,-3,9};
 		Sorting.bubbleSort(a);
@@ -181,7 +181,7 @@ public class Sorting {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void testInsertionSort() {
 		int a[] = {2,5,1,-7,-3,9,1,-3};
 		Sorting.insertionSort(a);
@@ -191,7 +191,7 @@ public class Sorting {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void testMergeSort() {
 		int a[] = {2,5,1,-7,-3,9,1,-3};
 		a = Sorting.mergeSort(a);
@@ -201,7 +201,7 @@ public class Sorting {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void testQuickSort() {
 		int a[] = {2,5,1,-7,-3,9,11,6,89,33,65,78,112};
 		a = Sorting.quicksort(a, 0, a.length-1);

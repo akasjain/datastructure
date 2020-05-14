@@ -1,0 +1,740 @@
+Pending: Dispatcher, ACID
+----------------------------------------------------
+System Designs:
+-------------------------------------------------------------------------
+Load Balancing:
+	- It helps to distribute load across multiple resources. 
+	- It also keep track of status of all the resources while distributing requests. If a server is not available, it stops sending traffic. 
+	- LB can be added at three places:
+		- Between user & web-server
+		- Between web-servers & internal servers (Application servers or cache servers)
+		- Between Internal platform layer & DB
+	- Types of load balancers: 
+		- Smart Clients
+			- It'll take a pool of service hosts & balances load, manage them (Detect recovered host, deal with adding new hosts, etc)
+		- Hardware LB: 
+			- They are hardware which works as LB, but are very expensive. 
+			- Even big companies use them only as first point of contact & use other machanism for load-balancing.
+		- Software Load balancers:
+			- It's hybrid approach. HAProxy is popular open source software LB.
+			- Every client request on this port (where HAProxy is running) will be received by proxy & then passed to the backend service in efficient way. 
+			- HAProxy manages health check & will remove or add machines to those pools.
+			- We should start with these.
+	- Ways of load balancing:
+		- Round robin
+		- Round robin with weighted server
+----------------------------------------------------------------------------
+Caching:
+	- Caching works on locality of reference principle: recently requested data is likely to be requested again.
+	- It's like short-term memory which has limited space but is faster & contains most recently accessed items. 
+	- Cache can be used in almost every layer: hardware, OS, Web browsers, web application, but are often found nearest to the front end.
+	- Types of cache: 
+		- Application server cache:
+			- Placing a cache on request layer node enables the local storage of response data. When a request is made, node will quickly return the cached data, if exists. If not it'll query from disk.
+			- But when you've many nodes with load balancer, it randomely distribute across the nodes, the same request will go to different noodes, thus increasing cache misses
+			- Two choices are to overcome this: global cache & distribute cache.
+		- Distribute Cache:
+			- In it, each of its nodes own part of cached data. 
+			- The cache is divided up using a consitent hashing function, such that if a request node is looking for a certain piece of data, it can quickly know where to look within distributed cache to check if data is available. 
+			- Easily we can increase the cache space just by adding nodes to the request pool
+		- Global Cache:
+			- In this, all nodes use the same single cache space. Each of the request nodes queries the cache in the same way it would a local one.
+			- There can two type of global cache:
+				- First, when a cached response not found in cache, cache itself becomes responsible for retrieving the missing peice of data. 
+				- Second, it's the responsibility of request nodes to retrieve any data that is not found. It can be used when low cache hit % would cause the cache buffer with cache misses. In this situation, it helps to have a large % of data set in cache.
+		- CDN
+			- It's Content Distribution Network for serving large amount of static media which is common to all. 
+			- First request ask the CDN for data, if not cdn will query the back-end servers & then cache it locally
+			- If your system is not that big for CDN, you can serve static media from a seperate subdomain using a lightweight HTTP server like Nginx
+	- Cache Invalidation
+		- When data is modified in DB, it should be invalidated in the cache. 
+			- write-through cache: 
+				- Data is written into the cache & the DB at the same time.
+				- This allow cached to be fast
+				- Complete data consitency is there between cache & DB, so there is no loss of data
+				- Two writes are reqiured before the response is sent. So, it has higher latency for write operations.
+			- write-around cache: 
+				- Data is written directly to storage, bypassing the cache.
+				- Cache is not overwhelmed with write requests
+				- Subsequent read request will result in cache miss leading to higher latency
+			- write-back cache:
+				- Data is written to cache alone & completion is immedialtely confirm to client
+				 - Write to database is done after specified intervals.
+				 - Results in lower latenct and high throughout
+				 - Risk of data loss in case of crash of cache server
+	- Cache eviction policy
+		- FIFO
+		- LIFO
+		- LRU (Least Recently Used): Implement using Doubly Linked list & a hash function containing the reference of node in list
+		- Most Recently Used
+		- Least frequently Used
+		- Random Replacement
+
+---------------------------------------------------------------------
+Sharding or Data Partitioning:
+	- Sharding is a technique to break up a big database into many smaller parts
+	- Horizontal scaling means adding more machines, which is cheaper & more feasible
+	- Vertical scaling means improving servers
+	- Partitioning Methods:
+		- Horizontal partitioning:
+			- In this we put different rows into different table(db), i.e. rows can be based on location with zip codes, this is also range based sharding
+			- Problem is if range is not choosen carefully, it'll lead to unbalanced servers.
+		- Vertical Partitioning:
+			- In this we divide data to store tables related to a specfic feature to their own servers.i.e. In Instagram, we can have 1 for user profile, 1 for photos, 1 for friend list.
+			- Problem is in case of additional growth, its necessary to further partition a feature specific DB across servers.
+		- Directory based Partitioning:
+			- In this, create a lookup service which knows your current partitioning scheme & get it from DB access code.
+			- To find out a data entry, we query directory server that holds the mapping between each tuple key to its DB server.
+			- This is good to perform tasks like adding servers to the DB pool or change our partitioning scheme without impacting application.
+	- Partitioning Criteria:
+		- Hash-based partitioning:
+			- In this we apply a hash function to some key attribute of the entity we're storing, that gives partition number. 
+			- Make sure to ensure uniform allocation of data among servers
+			- Problem is it effectively fixes total number of DB servers, since adding a new server means changing the hash function, which would require redistribution of data & downtime, the workaround is Consistent Hashing.
+		- List Partitioning:
+			- In this each partition (DB server) is assigned a list of values, i.e. APAC, EMEA, US region has respective partition.
+		- Round-robin Partitioning:
+			- One by one assign which ensure uniform data distribution
+		- Composite partitioning:
+			- Combining any of above partitioning schemas to devise a new scheme. i.e First list partitioning with hash partitioning in each.
+	- Common problems with Sharding:
+		- Joins & Denormalisation:
+			- Performing joins on a database which is running on one server is straightforward, but if DB is partitioned & spread across multiple machines, it's not feasible to perform joins that span database shards.
+			- These joins won't be performance efficient.
+			- Workaround is to denormalise the DB so that queries that required joins can be performed on single table.
+		- Referential integrity:
+			- Trying to enforce data integrity constraint suh as foreign keys in a sharded DB can be extremely difficult. Most of RDMS do not support this.
+		- Rebalancing:
+			- When data distribution is not uniform. 
+			- When there is lot of load on a particular Shard.
+--------------------------------------------------------------------
+Indexes:
+	- Very useful in database to improve the speed of data retrieval.
+	- Index makes trade-off of increased storage overhead, slower writes for the benefit of faster read.
+	- Index is a data structure of table of contents that points us to the location where actual data lives, so when we create an index on a column of a table, we store that column & a pointer to the whole row in the index.
+	- Indexing is mainly done in two ways:
+		- Ordered Indexing: Column is sorted as per ascending order
+		- Hash Indexing: Indexing is as per Hash function & Hash table
+----------------------------------------------------
+Proxy: 
+	- Proxy server is intermediary hardware/software that sits between the client & server
+	- They are used to filter requests, log requests, transform request by adding/ removing headers, encrypting/decrypting or compression
+	- It's cache can serve a lot of requests.
+	- It can coordinate requests from multiple servers & can be used to optimize request traffic. 
+	- It can merge same request from multiple requests into one.
+	- It collapse requests for data that is spatially close together in the storage, which'll descrease request latency.
+	- Proxies are useful under high load situations or when we have limited caching.
+-----------------------------------------------------
+Queue:
+	- Generally you send one request & you get response, but when you send so many requests in big servers, it's very important to have processing queue, where you send request & they all go in processing queue & it solve one by one.
+	 - Queue are based on asynchronous communication protocol
+	 - Queues are also used as fault tolerance; In case of any sevice outage, they can retry the requests.
+	 - Examples: RabbitMQ, ZeroMQ, ActiveMQ, and BeanstalkD
+-----------------------------------------------------
+Redundancy & Replication:
+	- Redundancy: Duplication of critical system functions to ensure system is always available. Typically thorugh master-slave server or multiple nodes.
+	- Replication: Sharing information / data among the redundant resources to ensure consistency across all redundant nodes.
+-----------------------------------------------------
+SQL vs NoSQL:
+	- SQL: It stores data in row & columns
+		- MySQL, Oracle, SQLite
+		- Each record has fixed schema, columns must be decided before data entry, can be altered but involves modifying whole database & going offline
+		- It uses SQL Query
+		- SQL are vertically scalable i.e. by increasing the higher memory, CPU of headware, which can be very expensive
+		- Most of SQLs are ACID compliant (Atomity, Consistency, Isolation, Durability) 
+		- When you want to ensure ACID compliance & your data is structured & unchanging.
+		
+	- NoSQL: Common types
+		- Key-Value stores: Redis, Voldemart, Dynamo
+		- Document databases: MongoDB, CouchDB
+		- Wide-Column database: Column families
+			- Best suited for analyzing large dataset
+			- Cassendra, HBase
+		- Graph Database: Data is saved in graph structure with nodes(entities), properties & lines(Connection)
+			- Neo4J, InfiniteGraph
+		- Here schemas are dynamic, Coulmns can be added on the fly & each row doesn't have to be contain each columns
+		- Here queries are focused on a collection of documets. It's also known as UNQL (Unstructured Query language)
+		- These are horizontally scalable meaning we can add more servers easily. Lot of servers are distributed data servers also.
+		- Most of NoSQL sacrifice ACID compliance for performance & scalibility.
+		- When storing large volume of data with rapid development with no structure fixed.
+		- Cloud based commputing & storage. They are designed to be scaled across multiple data servers		
+------------------------------------------------------
+CAP Theorem:
+	- Consistancy, Availability, Partition tolerance
+	- You can achieve any two among CAP at a time, not all
+	- Consistancy: All users see the same data at the same time
+	- Availability: System continues to function even with node failures
+	- Partition tolerance: System continues to function even if communication fails between two nodes
+-------------------------------------------------------
+Consistent Hashing:
+	- If you have 'K mod n' way hashing, adding a new server can have all hashing need to do from starting
+	- But in consistent hashing we need to map only k/n again, where k = number of keys & n is cache servers
+	- Whenever you add new cache server, it'll fetch some of existing servers keys, which lie inside it.
+	- When you remove any nodes, next node handles all it's keys, so we need to map only deleted node's key.
+-------------------------------------------------------
+Http communication between client & server
+- Ajax calls
+- New ways to 
+	- Http Long polling: 
+		- The server delays its response until an update is available, or until a timeout has occurred. 
+		- When an update is available, the server sends a full response to the client.
+	- WebSockets
+		- The client establishes a WebSocket connection through a process known as the WebSocket handshake. This provides real-time data transfer from and to the server
+		- It provides way for server to send content without being asked by client.
+		- This way, two way ongoing connection can take place between client & server.
+	- Server sent Events (SSE)
+		- Under SSEs the client establishes a persistent and long-term connection with the server. If Client wants to send data, it needs to have another technology to do so.
+		- SSEs are best when we need real time traffic from server to client, server is generating data in loop & sending multiple event to client.
+-------------------------------------------------------
+Kafka:
+	- Kafka is a distributed streaming platform that is used for publish and subscribe to streams of records. 
+	- Kafka is fast and uses IO efficiently by batching and compressing records. Kafka is used for decoupling data streams. Kafka is used to stream data into data lakes, applications, and real-time stream analytics systems.
+	- Kafka clusters retain all published record. If you don’t set a limit, it will keep records until it runs out of disk space.
+	- Kafka Is Scalable Message Storage
+	- Why kafka is fast: Kafka enables you to batch data records into chunks. These batches of data can be seen end-to-end from producer to file system (Kafka topic log) to the consumer. Batching allows for more efficient data compression and reduces I/O latency. 
+	
+	- Producer: 
+		- It send data, message, file
+	- Consumer: 
+		- It receive data
+		- Producer just send the data to kafka server & any consumer can subscribe from kafka server. Consumer keeps on requesting data from server.
+	- Broker:
+		- Producer & consumer interact through Broker or kafa server
+	- Cluster:
+		- Kafka is distributed system, so cluster have many brokers
+	- Topic: 
+		- It's for identification for uniquely identify stream.
+		- i.e we created Global Orders topic is created, Now consumer can subcribe to this topic
+	- Partition: 
+		- Break Kakfa topic to multiple partition & store one partition on one cumputer
+		- It's upon us to decide how many partition can be there. 
+	- Offset: 
+		- It's sequence id given to message as they arrive in partition
+		- Topic name - Partition Number - Offset can locate exact message
+	- Consumer Group:
+		- Group of consumer who share the same workaround
+		- It's for scalibility
+-----------------------------------------------------------
+Hashing:
+
+- Hashing is generating a value or values from a string of text using a mathematical function called Hash Function
+- Hashing is one way to enable security during the process of message transmission when the message is intended for a particular recipient only.
+  A formula generates the hash, which helps to protect the security of the transmission against tampering.
+
+- Can search in O(1)
+- Hashing is done by Hash Table & Hash function
+
+- H(x) = x mod 10
+i.e Hash table consist of 0 to 9
+- 21, 56, 72, 39, 48, 96 will be stored as per x mod 10
+- 56 & 96 will occur in same cell so they'll be override
+
+- What is good function: 
+	- Easy to cumpute
+	- Even distribution
+	- Less collision
+	
+i.e x mod PrimeNumber => x mod 7
+- Something which evenly distribute the numbers
+
+- How to resolve collision (Simple collision handling):
+	- We can have separate chaining when more than 1 item is in cell. New item will be at the front.
+	- By this way we can insert all items, but searching & deletion will take time. 
+	- This is open hashing as we'll creating linked list to add collision.
+- Open addressing (Closed hashing)
+	- In this, data goes inside the table, no need to make linked list
+	- By linear probing
+		- If x mod 10 is already present, do on (x + 1) mod 10, if it's present too, do on (x + 2) mod 10
+		- Issue is there'll block of data in chunks, not evenly distributed
+	- For it, quadratic probing
+		- In this H(x) = (Hash(x) + f(i))
+		- f(i) = i ^ 2;
+	- Double Hashing
+		- f(i) = i * Hash2(x)
+		- Hash2(x) = R - x mode R (i.e R = 7)
+-------------------------------------------------------------------------------
+LRU:
+Typically LRU cache is implemented using a doubly linked list and a hash map.
+Doubly Linked List is used to store list of pages with most recently used page at the start of the list. So, as more pages are added to the list, least recently used pages are moved to the end of the list with page at tail being the least recently used page in the list.
+Hash Map (key: page number, value: page) is used for O(1) access to pages in cache
+
+When a page is accessed, there can be 2 cases:
+1. Page is present in the cache - If the page is already present in the cache, we move the page to the start of the list.
+2. Page is not present in the cache - If the page is not present in the cache, we add the page to the list. 
+How to add a page to the list:
+   a. If the cache is not full, add the new page to the start of the list.
+   b. If the cache is full, remove the last node of the linked list and move the new page to the start of the list.
+----------------------------------------------------------------------------
+Zookeepar:
+	- Distribution application require coordination & thats what zookeeper does
+	- It provides service for Distributed open source centralizes coordination:
+		- Maintaining configuration information: Sharing config info across all 'nodes'
+		- Naming: Name the cluster of 1000s servers
+		- Providing distributed synchronization: Locals, Barriers, Queues
+		- Providing Group services: Leader selection
+	- Replication mode (when there is cluster), Zookeepar runs on cluster if machines:	
+		- There's one leader & other are followers
+		- All followers has info about each other so if Leader die, next follower can be made leader. Maintain an in-memory image of state
+		- Client connect to only one server
+	- Consistancy Guarantees
+		- Sequential consitency
+		- Atomicity
+	- It has Znodes, node holds data, children or both
+----------------------------------------------------------------------------
+Solr:
+- It's an open source search platform written in Java from Apache Lucene project
+- Major features:
+	- Full text search: Searching document in full text database rather than metadata
+	- Hit highlighting: Term search 
+	- Faceted search: Search as per faceted classfication system
+	- Real-time indexing
+	- Dynamic clustering: Can have nodes
+	- Database integration
+	- NoSQL features
+	- Rich Document handling. 
+- Solr is widely used for search & analytic use case
+- It runs as a standalone full-text search server. It uses the Lucene Java search library at its core for full-text indexing & search. 
+- It has REST like HTTP/xml & JSON APIs that make it usable from programming languages. 
+- Solr's external configuration allows it to be tailored to many types of application without Java coding. 
+-----------------------------------------------------------------------------------------
+Apache Hadoop:
+	- Collection of open source softwares that facilitate using a network of many computers to solve problems involving massive amount of data and computation. 
+	- It provides a software framework for distributed storage & processing of Big Data using the MapReduce programming model.
+	- All the modules in Hadoop are designed with assumption that hardware failures are common occurrences & should be automatically handled by the framework. 
+	- The core of Hadoop consist of a Storage part, known as Hadoop Distributed File System (HDFS) & a processsing part which is a MapReduce programming model.
+	- Hadoop splits files into large blocks & distribute them across nodes in a cluster. It then transfers packaged code into nodes to process the data in parallel. This approach takes advantage of data locality, where nodes manipulate the data they have access to. 
+	- This composed of following modules:
+		- Hadoop Common: Contain libraries & utilities needed by other hadoop modules.
+		- HDFS: Distributed file system that stores data on commodity machines, providing very high aggregate bandwidth across the cluster. 
+		- Hadoop YARN: Introduced in 2012 is a platform responsible for managing cumputing resource in clusters & using it for applications. 
+		- Hadoop MapReduce: MapReduce programming model for large-scale data processing. 
+	- Hadoop's MapReduce & HDFS components were inspired by Google papers. 
+------------------------------------------------------------------------------------------
+HDFS:
+	- HDFS stores large files across multiple machines. 
+	- It achieves reliability by replicating the data across multiple hosts. 
+	- With the replication value 3, data is stored on three nodes: two on same rack & one on different rack. 
+	  Data nodes can talk to each other to rebalance data, to move copies around to keep replication data high. 
+	 - HDFS is highly fault-tolerant and is designed to be deployed on low-cost hardware. 
+-----------------------------------------------------------------------------
+HBase:
+	- HBase is an open-source distributed database modeled after Google's BigTable & is written in java.
+	- In addition, it is a column-oriented database built on top of HDFS providing Bigtable-like capabilities for Hadoop.
+      That is, it provides a fault tolerant way of storing large quantities of sparce data.
+	- HBase features compression, in-mempry operation & Bloom filters on a per column basis.
+   	  Tables in HBase can serve as the input & output for MapReduce jobs run in Hadoop & may be accessed through the JAVA Api but also through REST, Avro or Thrift gateway APIs. 
+	- Hbase is column oriented key-value data store & runs on top of HDFS & well suited for faster read & write operations on large dataset with high throughput. 
+	- It can work on multiple types of data also making it useful for varied business scenarios
+	- Major components of HBase Architecture: Zookeepar, HMaster Server, Region Server
+	- For Larger table, it offers fast lookup
+-----------------------------------------------------------------------------
+Column Oriented Database:
+	- HBase, Cassendra
+	- Here, the table schema defines only column families, which are the key-value pairs. 
+	  However, it is possible that a table has multiple column families and here each column family can have any number of columns.
+	  Moreover, here on the disk, subsequent column values are stored contiguously. And, also each cell value of the table has a timestamp here.
+	- The table refers to the collection of rows.
+	  Row refers to the collection of column families.
+      Column family refers to the collection of columns.
+      The column refers to the collection of key-value pairs.
+	- Databases in which store data tables as sections of columns of data, instead of rows of data are Column-oriented Databases.
+      In simple words, they will have column families.
+	- Suitable for Online Analytical Processing (OLAP)
+	- Designed for huge tables
+-----------------------------------------------------------------------------
+Cassandra:
+	- It's free & open-source distributed wide column store NoSQL database designed to handle large amount of data across many commodity servers providing high availibity with no single point of failure. 
+	- It offers support for clusters apanning multiple datacenters with asynchronous masterless replication allowing low latency operation for all clients.
+	- In addition, Cassendra is always up, always on, & delivers very consitent. 
+	- It provides massive scalibility which is spread across nodes in more than one data center, for high availibity.
+	- Based on Amazon dynamo & Google Bug Table
+-----------------------------------------------------------------------------
+HBase vs Cassendra:
+	- Unlike Hadoop, which is typically deployed in a single location, Cassandra’s high distribution allows for deployment across countries and continents.
+	- Hadoop can accept & store data in any format- structured, unstructured, images etc. Cassendra requires a certain structure. As a result, a lot of thinking is required to structure a Cassendra data model vs Hadoop model. 
+	- HBase is designed for data lake use cases & is not typically used for Web & mobile apps. Cassendra by contrast, offers the availibity & performance necessary for developing always-on apps. 
+	- While Cassendra works very well as a highly fault tolerant backend for online systems, it's not analytics friendly. Deploying Hadoop on top of Cassandra creates the ability to analyze data in Cassandra without having to first move that data into Hadoop. 
+-----------------------------------------------------------------------------
+Stateful vs Stateless:
+Stateful: When server store the user info or other user state
+Stateless: When user doesn't store user's state & just return the response
+-----------------------------------------------------------------------------
+Layered System:
+In telecommunication, a layered system is a system in which components are grouped, i.e., layered, in a hierarchical arrangement,
+such that lower layers provide functions and services that support the functions and services of higher layers.
+-----------------------------------------------------------------------------
+REST services:
+A service is RESTful service, if it follows follwoing:
+- Uniform Interface: Service is resource based, Manipulation of data is allowed through representation, Message is self descriptive 
+- Stateless: All state is defined as part of query or path parameters. No need to explicitely store state.
+- Cachable
+- Layered System: Where there are layered system
+- Client Server: Client code is seperate than server
+https://www.restapitutorial.com/lessons/whatisrest.html#
+
+- REST permits different data format such as plain text, HTML, xml, json
+- REST doesn't need more bandwidth. It can send data in plain json
+
+-------------------------------------------------------------------------------
+SOAP:
+- This is Simple Object Access Protocol, it's basically a protocol, which can work only with xml format. 
+- This cannot make use of REST
+- It require more bandwidth & amount of data transfer using SOAP is a lot.
+
+-------------------------------------------------------------------------------
+Monolithic Architecture:
+- In layman terms, you could say, it's like a big container wherein all the software components of an application are asembled together & tightly coupled.
+- Issues with it:
+	- Agility: In case of adding new services, you need to chnage whole architecture or platform
+	- Scalability
+	- Fault tolerance: In case of something down, whole system is down
+- Single framework
+-------------------------------------------------------------------------------
+Microservices Architecture:
+
+- Monolithic application is decomposed to different component
+- Different services for different component & interact with each other through RESTful
+- Microservices: one for search, other for notification, index, etc
+- Each have their LB, cache, indexes, REST api
+- Benefits: Single capabilities, Independant as Product, Decouping, Continious delivery, Componentisation, Autonomy, Scalibility
+- Use-Case: Uber
+	- Earlier it was monolithic, all were in single framework.
+	- Then chnaged to Microservices
+	- API gateway was for all component & API gateway redirect to different component. 
+	- Search microservices has more servers than for other services
+- Best Practics: 
+	- Seperate data stores
+	- Seperate as per features
+	- Server which are stateless
+----------------------------------------------------------------------------------
+Schedular: 
+- They are cron job, which keeps on checking something on regular interval
+
+----------------------------------------------------------------------------------
+OpenTSDB:
+
+- OpenTSDB is a scalable time series database built on top of Hadoop and HBase. It simplifies the process of storing and analyzing large amounts of time-series data generated by endpoints like sensors or servers.
+- Runs on Hadoop and HBase
+- Scales to millions of writes per second
+- Add capacity by adding nodes
+- Generate graphs from the GUI
+- Pull from the HTTP API
+- Supports Graphana for visualization of data
+	
+---------------------------------------------------------------------------------------
+Graphana:
+
+- Grafana is an open source visualization tool that can be used on top of a variety of different data stores.
+- It allows you to query, visualize, alert on and understand your metrics no matter where they are stored. 
+
+---------------------------------------------------------------------------------------
+WebAccelator: Varnish
+
+- A web accelerator is a proxy server that reduces web site access time. They can be a self-contained hardware appliance or installable software.
+- Varnish is an HTTP accelerator designed for content-heavy dynamic web sites as well as APIs. 
+- They use following techniques to accelerate:
+	- cache recently documents
+	- preemptively resolve documents
+	- prefectch documents
+	- compress documents
+	- optimize the code
+	- filter out ads 
+	- maintain persistent TCP connection
+
+- i.e When about 30 to 40 calls for the same API are coming to varnish, it combines all of that API calls and get it once and cache it for few seconds also. This stampede can be avoided by Request collapse : serve response to all similar request in a few millisecond window so everyone gets the response and once this response is cached in Varnish.
+-------------------------------------------------------------------------------------------
+Hystrix:
+
+- Hystrix is a latency and fault tolerance library designed to isolate points of access to remote systems, services and 3rd party libraries.
+
+- It helps to stop cascading failure and enable resilience in complex distributed systems where failure is inevitable. Tt is used to do Circuit breaking for all of the Microservices(Core apis and product APIs) used.
+
+- The Circuit breaker pattern helps to prevent such a catastrophic cascading failure across multiple systems/microservices.
+
+---------------------------------------------------------------------------------------------
+Scalable APIs:
+
+- Have two APIs for system:
+	- core Apis: These are internal core apis.
+	- Product api: These are for third party. It's made of core apis
+	
+- So when anyone calls product apis, Binder is a component which handles calling core APIs (asynchronous) & merging & returning to product API
+
+- If due to any reason one core APIs fails, don't send incomplete results.
+
+-------------------------------------------------------------------------------------
+Fault Tolerance:
+- To avoid system failure, we can do two things:
+	- To have replicas in different locations
+	- To have check-points on stable builds & store it on regular intervals.
+	
+---------------------------------------------------------------------------------
+How many requests a server can handle:
+- Now that we know why we need a concurrent request limit, how do we determine the specific value to use? The CPU-bound server we have been talking about is relatively straightforward: If we limit it to one concurrent request, then each request gets processed in exactly 10 ms, and the server can process 100 requests per second if they arrive perfectly spaced out. However, in reality requests might arrive in clumps. In this case, the server will reject requests that arrive close together, and will be idle while waiting for the next request. However if we allow more concurrent requests, then in "busy" periods, processing time goes up. In the worst case, if we accept too many requests, we run out of memory or cause a catastrophic failure again.
+
+-------------------------------------------------------------------------------------
+
+System Design Interviews: Solving in 7 steps
+Step 1: Requirement clarification
+Step 2: System interface definition - Define the APIs are expected from the system
+Step 3: Back-of-the-envelope estimation: Scaling, partitioning, load balancing & caching
+Step 4: Defining data model Columns for different tables
+Step 5: High level Design: Block diagram with 5-6 boxes
+Step 6: Detailed design: Handling a particular component
+Step 7: Indetifying & resolving bottlenecks: handling failures, server, etc
+-------------------------------------------------------------
+
+TinyUrl:
+Requirement & goal of system:
+	- Functional requirement: 
+		- User should be able to short the url
+		- On click, it should lead to big url
+		- User should be able to give expiration time of url
+		- User should be able to give custom url
+	- Non-Functional:
+		- System should be highly available
+		- Url redirection should be with minimal latency
+		- Url should not be guessable
+	- Extended requirement:
+		- Analytics(How many times a redirection happended)
+		- Should be accessble through REST Apis
+
+Capacity Estimation & Constraints:
+	- Traffic estimates
+		- Let's assume 100:1 ratio between read & write
+		- 500M new URL shortening request per month & 500M * 100 = 50B for redirection
+		- URL shortening per second:
+			500M / (30days * 24hr * 3600s) = ~ 200 URLs/s
+		- URL redirection per second:
+			50B / (30days * 24hr * 3600s) = ~ 19K/s
+	- Storage Capacity
+		- Say we need to store each request for 5 yr
+		- 500M * 5yr * 12 month = 30B calls
+		- Assume each call have 500bytes size each
+			- 30B * 500bytes = 15TB
+	- Bandwidth estimates:
+		- For write request, incoming data per second
+			- 200 url/s * 500 bytes = 100KB/s
+		- For read incoming data per second
+			- 19k * 500 bytes = ~ 9 MB/s
+	- Memory estimates: 
+		- For caching hot url, if we follow 80-20 rules, 20% url generates 80
+		5 of traffic, we would like to cache these 20% hot URLs.
+		- 19k request/s * 24hr * 3600s = ~ 1.7 billion calls per day
+		- Cache 20% oh these - 0.2 * 1.7B * 500 bytes = ~ 170 GB
+System API:
+	- createURL(api_dev_key, original_url, custom_alias=None, user_name=None, expiry_date=None)
+	- deleteURL(api_dev_key, url_key)
+	- api_dev_key can be used to throttle excessive use for a particual user
+Database Design:
+	- Nature of data	
+		- Need to store billions of records
+		- Each object is small
+		- No relationship between records other than storing which user created a URL
+		- Service is read heavy
+	- Database Schema:
+		- We need two table
+		- One for storing info about URL mappings
+			urlId: Hash, OriginalURL, ExpirationDate, UserId
+		- Other for User
+			userId, Name, Email, CreationDate, LastLogin
+Basic System Design & Algorithm:
+	- Encoding actual Url
+		- Compute unique hash of url: MD5 or SHA256
+		- Then we can encode for displaying: base36([a-z, 0-9]), base62([A-Z, a-z, 0-9]), base64(if we add -, .)
+		- base64 encoding with 6 letter = 64^6 = ~68.7 billion possible string
+		- Issues:
+			- If multiple user hit same URL, they can get same shortened Url
+			- Add sequecne number if same url is accessed
+	- Generating keys offline
+		- KGS (Key Generation Service) that generates 6 letter strings beforehand & store them in db, whenever we want to shorten a url, take anyone & use it. 
+		- To avoid concurrency we can take two tables, one for used one & other for non-used
+		- To avoid single point of failure, add replica by standby server
+Data partitioning & Replication:
+	- Range based: Based on starting letter
+	- Hash-based: Based on hash
+Cache: 
+	- We need memory for 20% traffic which is 170 gb
+	- LRU is best for eviction policy
+Load Balancer
+	- Between client & Application server
+	- Between Application server & Database
+	- Between Application server & Cache servers
+Purging or DB cleaning:
+	- Using lazy cleanup, clean url, which are not using much
+Telemetry:
+	- We can store analytic data of users for statistic
+Security & Permission:
+	- We can add url accessed to be private or public to a user
+----------------------------------------------------------------------
+Pastebin:
+Requirement & goal of system:
+	- Functional requirement: 
+		- User should be able to paste the content & should generate url
+		- On click, it should lead to content
+		- User should be able to give expiration time of url
+		- User should be able to give custom title
+		- User should be able to give Exposure type(private/public)
+	- Non-Functional:
+		- System should be highly available & reliable; content should not be lost
+		- Url redirection should be with minimal latency
+		- Url should not be guessable
+	- Extended requirement:
+		- Analytics(How many times a redirection happended)
+		- Should be accessble through REST Apis
+
+Capacity Estimation & Constraints:
+	- Traffic estimates
+		- Let's assume 5:1 ratio between read & write
+		- 1M new URL shortening request per day for paste & 1M * 5 = 5M for redirection
+		- URL shortening per second:
+			1M / (24hr * 3600s) = ~ 12 paste/s
+		- URL redirection per second:
+			5M / (24hr * 3600s) = ~ 60 reads/s
+	- Storage Capacity
+		- Say we need to store each request for 10 yr
+		- 1M * 10yr * 365 = 3.6B calls
+		- Assume user can store 10MB of data size max, but average of 10KB
+			- 3.6B * 10KB = 36TB
+		- For storing unique keys: We use base64 coding with 6 characteres, we can store: 64^6 ~= 68 billion unique strings.
+			- We need to store 3.6B calls & say each chracter has 1 byte of data:
+				3.6B * 6 = 22GB 
+	- Bandwidth estimates:
+		- For write request, incoming data per second
+			- 12 paste/s * 10kb = 120KB/s
+		- For read incoming data per second
+			- 60 reads/s * 10kb = ~ 600 KB/s
+	- Memory estimates: 
+		- For caching hot url, if we follow 80-20 rules, 20% url generates 80
+		5 of traffic, we would like to cache these 20% hot URLs.
+		- 60 request/s * 24hr * 3600s = ~ 5M calls per day
+		- Cache 20% of these - 0.2 * 5M * 10KB = ~ 10 GB
+System API:
+	- addPaste(api_dev_key, content, custom_alias=None, user_name=None, expiry_date=None)
+	- getPaste(api_dev_key, url_key)
+	- deletePaste(api_dev_key, url_key)
+	- api_dev_key can be used to throttle excessive use for a particual user
+Database Design:
+	- Nature of data	
+		- Need to store millions of records
+		- Each object is medium size
+		- No relationship between records other than storing which user created a URL
+		- Service is read heavy
+	- Database Schema:
+		- We need two table
+		- One for storing info about pasted content
+			urlId: Hash, content, ExpirationDate, UserId
+		- Other for User
+			userId, Name, Email, CreationDate, LastLogin
+Basic System Design & Algorithm:
+	- Encoding actual Url
+		- Upon getting request, system'll generate 6-letter random string, which would serve as key. 
+		- If generated key is already there, again try
+		- If users's custom key is already there, throw error.
+	- Generating keys offline
+		- KGS (Key Generation Service) that generates 6 letter strings beforehand & store them in db, whenever we want to shorten a url, take anyone & use it. 
+		- To avoid concurrency we can take two tables, one for used one & other for non-used
+		- To avoid single point of failure, add replica by standby server
+Data partitioning & Replication:
+	- Range based: Based on starting letter
+	- Hash-based: Based on hash
+Cache: 
+	- We need memory for 20% traffic which is 10 gb
+	- LRU is best for eviction policy
+Load Balancer
+	- Between client & Application server
+	- Between Application server & Database
+	- Between Application server & Cache servers
+Purging or DB cleaning:
+	- Using lazy cleanup, clean url, which are not using much
+Telemetry:
+	- We can store analytic data of users for statistic
+Security & Permission:
+	- We can add url accessed to be private or public to a user
+----------------------------------------------------------------------
+Instagram:
+Pastebin:
+Requirement & goal of system:
+	- Functional requirement: 
+		- User should be able to upload/download/view photos.
+		- User should be able to follow other users. 
+		- User should see followed user's posted photos on page.
+		- User should be able to search photos or videos.
+		- User should be able to share photos on facebook. (Non-MVP)
+		- User should be able to give Exposure type(private/public) (Non-MVP)
+	- Non-Functional:
+		- System should be highly available & reliable; content should not be lost
+		- 
+	- Extended requirement:
+		- Analytics(How many times a redirection happended)
+		- Should be accessble through REST Apis
+
+Capacity Estimation & Constraints:
+	- Traffic estimates
+		- Let's assume 5:1 ratio between read & write
+		- 1M new URL shortening request per day for paste & 1M * 5 = 5M for redirection
+		- URL shortening per second:
+			1M / (24hr * 3600s) = ~ 12 paste/s
+		- URL redirection per second:
+			5M / (24hr * 3600s) = ~ 60 reads/s
+	- Storage Capacity
+		- Say we need to store each request for 10 yr
+		- 1M * 10yr * 365 = 3.6B calls
+		- Assume user can store 10MB of data size max, but average of 10KB
+			- 3.6B * 10KB = 36TB
+		- For storing unique keys: We use base64 coding with 6 characteres, we can store: 64^6 ~= 68 billion unique strings.
+			- We need to store 3.6B calls & say each chracter has 1 byte of data:
+				3.6B * 6 = 22GB 
+	- Bandwidth estimates:
+		- For write request, incoming data per second
+			- 12 paste/s * 10kb = 120KB/s
+		- For read incoming data per second
+			- 60 reads/s * 10kb = ~ 600 KB/s
+	- Memory estimates: 
+		- For caching hot url, if we follow 80-20 rules, 20% url generates 80
+		5 of traffic, we would like to cache these 20% hot URLs.
+		- 60 request/s * 24hr * 3600s = ~ 5M calls per day
+		- Cache 20% of these - 0.2 * 5M * 10KB = ~ 10 GB
+System API:
+	- addPaste(api_dev_key, content, custom_alias=None, user_name=None, expiry_date=None)
+	- getPaste(api_dev_key, url_key)
+	- deletePaste(api_dev_key, url_key)
+	- api_dev_key can be used to throttle excessive use for a particual user
+Database Design:
+	- Nature of data	
+		- Need to store millions of records
+		- Each object is medium size
+		- No relationship between records other than storing which user created a URL
+		- Service is read heavy
+	- Database Schema:
+		- We need two table
+		- One for storing info about pasted content
+			urlId: Hash, content, ExpirationDate, UserId
+		- Other for User
+			userId, Name, Email, CreationDate, LastLogin
+Basic System Design & Algorithm:
+	- Encoding actual Url
+		- Upon getting request, system'll generate 6-letter random string, which would serve as key. 
+		- If generated key is already there, again try
+		- If users's custom key is already there, throw error.
+	- Generating keys offline
+		- KGS (Key Generation Service) that generates 6 letter strings beforehand & store them in db, whenever we want to shorten a url, take anyone & use it. 
+		- To avoid concurrency we can take two tables, one for used one & other for non-used
+		- To avoid single point of failure, add replica by standby server
+Data partitioning & Replication:
+	- Range based: Based on starting letter
+	- Hash-based: Based on hash
+Cache: 
+	- We need memory for 20% traffic which is 10 gb
+	- LRU is best for eviction policy
+Load Balancer
+	- Between client & Application server
+	- Between Application server & Database
+	- Between Application server & Cache servers
+Purging or DB cleaning:
+	- Using lazy cleanup, clean url, which are not using much
+Telemetry:
+	- We can store analytic data of users for statistic
+Security & Permission:
+	- We can add url accessed to be private or public to a user
+----------------------------------------------------------------------

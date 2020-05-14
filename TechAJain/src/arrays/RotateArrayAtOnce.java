@@ -1,23 +1,38 @@
 package arrays;
 
+import java.util.Scanner;
+
 public class RotateArrayAtOnce {
 
 	public static void main(String[] args) {
-		int[]a = {5,7,10,16,1,3,22};
-		int d=3;
-		int n = a.length;
-		for (int i : a) {
-			System.out.print(i + " ");
-		}
-		rotate(a, d, n);
-		System.out.print("\nRotated Array\n");
-		for (int i : a) {
-			System.out.print(i + " ");
-		}
 		
+		Scanner sc = new Scanner(System.in);
+		int numOfTest = sc.nextInt();
+		for(int i=0; i<numOfTest; i++) {
+			int n = sc.nextInt();
+			int d = sc.nextInt();
+			if(d > n) {
+				d = d%n;
+			}
+			int[] arr = new int[n];
+			int j = 0;
+			while(j < n) {
+				arr[j] = sc.nextInt();
+				j++;
+			}
+		
+			leftRotate(arr, d, n);
+			System.out.print("\nRotated Array\n");
+			
+			for (int num : arr) {
+				System.out.print(num + " ");
+			}
+			System.out.println();			
+		}
+		sc.close();
 	}
 
-	private static void rotate(int[] a, int d, int n) {
+	private static void leftRotate(int[] a, int d, int n) {
 		int[] temp = new int[d];
 		for (int i = 0; i < d; i++) {
 			temp[i] = a[i];
