@@ -1,0 +1,13 @@
+EditorSearch
+-----
+
+Fields -
+  boolean[] chars = new boolean[26];
+  EditorSearch[] child = new EditorSearch[26];
+  boolean terminate;
+  int count;
+
+Methods -
+  List<String> search(EditorSearch root, String key)
+  void addWord(String word)
+  void deleteWord(String word)
