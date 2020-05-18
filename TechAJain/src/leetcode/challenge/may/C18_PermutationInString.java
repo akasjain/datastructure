@@ -21,7 +21,7 @@ import java.util.Arrays;
     1. The input strings only contain lower case letters.
     2. The length of both given strings is in range [1, 10,000].
  */
-public class C17_PermutationInString {
+public class C18_PermutationInString {
     public boolean checkInclusion(String s1, String s2) {
 
         if(s1.equals("") || s1 == null || s2.equals("") || s2 == null)

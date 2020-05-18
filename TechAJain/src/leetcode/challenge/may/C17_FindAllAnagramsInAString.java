@@ -18,7 +18,7 @@ import java.util.Map;
     Input:  s: "cbaebabacd" p: "abc"
     Output: [0, 6]
  */
-public class C16_FindAllAnagramsInAString {
+public class C17_FindAllAnagramsInAString {
     public List<Integer> findAnagrams(String s, String p) {
         List<Integer> result = new ArrayList<>();
 
@@ -69,7 +69,7 @@ public class C16_FindAllAnagramsInAString {
     }
 
     public static void main(String[] args) {
-        C16_FindAllAnagramsInAString obj = new C16_FindAllAnagramsInAString();
+        C17_FindAllAnagramsInAString obj = new C17_FindAllAnagramsInAString();
         System.out.println(obj.findAnagrams("cbaebabacd", "abc").toString());
     }
 }
