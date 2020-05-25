@@ -72,6 +72,5 @@ public class C21_CountSquareSubmatricesWithAllOnes {
 
         matrix = new int[][]{{1,1},{1,1}};
         System.out.println(obj.countSquares(matrix));
-
     }
 }
