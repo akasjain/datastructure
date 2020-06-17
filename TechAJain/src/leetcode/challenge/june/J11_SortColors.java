@@ -40,13 +40,7 @@ public class J11_SortColors {
     public static void main(String[] args) {
         J11_SortColors obj = new J11_SortColors();
         int[] nums = new int[]{2,0,2,1,1,0};
-        //obj.sortColors(nums);
+        obj.sortColors(nums);
         System.out.println(Arrays.toString(nums));
-
-
-        System.out.println(Character.digit('a', 16));
-        System.out.println(Character.digit('A', 16));
-        System.out.println(Character.digit('G', 16));
-        System.out.println("172.16.254.1".indexOf("."));
     }
 }
