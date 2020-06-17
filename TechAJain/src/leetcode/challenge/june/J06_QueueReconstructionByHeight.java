@@ -19,7 +19,7 @@ import java.util.List;
     Input:[[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]]
     Output:[[5,0], [7,0], [5,2], [6,1], [4,4], [7,1]]
  */
-public class J6_QueueReconstructionByHeight {
+public class J06_QueueReconstructionByHeight {
     public int[][] reconstructQueue(int[][] people) {
         Arrays.sort(people, (a, b) -> a[0] == b[0] ? a[1] - b[1] : b[0] - a[0]);
         List<int[]> res = new ArrayList<>();
@@ -31,7 +31,7 @@ public class J6_QueueReconstructionByHeight {
     }
 
     public static void main(String[] args) {
-        J6_QueueReconstructionByHeight obj = new J6_QueueReconstructionByHeight();
+        J06_QueueReconstructionByHeight obj = new J06_QueueReconstructionByHeight();
         int[][] people = {{7,0}, {4,4}, {7,1}, {5,0}, {6,1}, {5,2}};
         obj.reconstructQueue(people);
     }

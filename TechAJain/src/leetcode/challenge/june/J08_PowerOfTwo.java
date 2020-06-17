@@ -19,7 +19,7 @@ package leetcode.challenge.june;
     Input: 218
     Output: false
  */
-public class J8_PowerOfTwo {
+public class J08_PowerOfTwo {
     public boolean isPowerOfTwo(int n) {
         if(n <= 0)
             return false;

@@ -20,7 +20,7 @@ package leetcode.challenge.june;
     Input: s = "axc", t = "ahbgdc"
     Output: false
  */
-public class J9_IsSubsequence {
+public class J09_IsSubsequence {
     public boolean isSubsequence(String s, String t) {
         int sLen = s.length();
         int tLen = t.length();
@@ -44,7 +44,7 @@ public class J9_IsSubsequence {
     }
 
     public static void main(String[] args) {
-        J9_IsSubsequence obj = new J9_IsSubsequence();
+        J09_IsSubsequence obj = new J09_IsSubsequence();
         System.out.println(obj.isSubsequence("abc","ahbgdc"));
         System.out.println(obj.isSubsequence("axc","ahbgdc"));
     }

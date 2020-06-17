@@ -30,7 +30,7 @@ package leetcode.challenge.june;
     the number of coins is less than 500
     the answer is guaranteed to fit into signed 32-bit integer
  */
-public class J7_CoinChange2 {
+public class J07_CoinChange2 {
     public int change(int amount, int[] coins) {
         int len = coins.length;
         if(len == 0)
@@ -54,7 +54,7 @@ public class J7_CoinChange2 {
     }
 
     public static void main(String[] args) {
-        J7_CoinChange2 obj = new J7_CoinChange2();
+        J07_CoinChange2 obj = new J07_CoinChange2();
         System.out.println(obj.change(10, new int[]{2,3,5}));
     }
 }

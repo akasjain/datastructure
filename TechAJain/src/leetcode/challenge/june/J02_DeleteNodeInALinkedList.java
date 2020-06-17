@@ -3,7 +3,7 @@ package leetcode.challenge.june;
 /**
  https://leetcode.com/problems/delete-node-in-a-linked-list/
  */
-public class J2_DeleteNodeInALinkedList {
+public class J02_DeleteNodeInALinkedList {
 
     public class ListNode {
       int val;

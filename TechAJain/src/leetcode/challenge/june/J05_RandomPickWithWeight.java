@@ -44,7 +44,7 @@ class Solution {
     }
 }
 
-public class J5_RandomPickWithWeight {
+public class J05_RandomPickWithWeight {
     public static void main(String[] args) {
         int[] w = {1,3};
         Solution obj = new Solution(w);

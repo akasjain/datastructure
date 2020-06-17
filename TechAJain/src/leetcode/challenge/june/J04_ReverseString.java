@@ -15,7 +15,7 @@ package leetcode.challenge.june;
     Input: ["H","a","n","n","a","h"]
     Output: ["h","a","n","n","a","H"]
  */
-public class J4_ReverseString {
+public class J04_ReverseString {
     public void reverseString(char[] s) {
         int len = s.length;
         for(int i = 0; i < len/2; i++) {

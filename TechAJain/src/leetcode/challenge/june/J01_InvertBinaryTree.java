@@ -5,7 +5,7 @@ package leetcode.challenge.june;
 
  Invert Binary Tree
  */
-public class J1_InvertBinaryTree {
+public class J01_InvertBinaryTree {
     public static class TreeNode {
       int val;
       TreeNode left;
@@ -25,7 +25,7 @@ public class J1_InvertBinaryTree {
     }
 
     public static void main(String[] args) {
-        J1_InvertBinaryTree obj = new J1_InvertBinaryTree();
+        J01_InvertBinaryTree obj = new J01_InvertBinaryTree();
         TreeNode root = new TreeNode(1);
         root.left = new TreeNode(2);
         root.right = new TreeNode(3);
