@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ 274. H-Index
  https://leetcode.com/problems/pascals-triangle-ii/
 
  Given an integer rowIndex, return the rowIndexth row of the Pascal's triangle.

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ Add and Search Word - Data structure design
  https://leetcode.com/problems/add-and-search-word-data-structure-design/
 
  You should design a data structure that supports adding new words and finding if a string matches any previously added string.

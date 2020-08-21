@@ -1,6 +1,7 @@
 package leetcode.challenge.august;
 
 /**
+ 520. Detect Capital
  https://leetcode.com/problems/detect-capital/
 
  Given a word, you need to judge whether the usage of capitals in it is right or not.

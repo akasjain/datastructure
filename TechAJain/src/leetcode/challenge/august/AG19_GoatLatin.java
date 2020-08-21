@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ 824. Goat Latin
  https://leetcode.com/problems/goat-latin/
 
  A sentence S is given, composed of words separated by spaces. Each word consists of lowercase and uppercase letters only.

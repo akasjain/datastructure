@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ 705. Design HashSet
  https://leetcode.com/problems/design-hashset/
 
  Design a HashSet without using any built-in hash table libraries.

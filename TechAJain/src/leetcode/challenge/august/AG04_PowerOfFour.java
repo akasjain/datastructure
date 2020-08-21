@@ -1,6 +1,7 @@
 package leetcode.challenge.august;
 
 /**
+ 342. Power of Four
  https://leetcode.com/problems/power-of-four/
 
  Given an integer (signed 32 bits), write a function to check whether it is a power of 4.

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ 967. Numbers With Same Consecutive Differences
  https://leetcode.com/problems/numbers-with-same-consecutive-differences/
 
  Return all non-negative integers of length N such that the absolute difference between every two consecutive digits is K.
